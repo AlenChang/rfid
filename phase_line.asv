@@ -7,13 +7,9 @@ out_phase = zeros(m,1);
 out_phase(1:idx-1) = phase_mat(1:idx-1,1)+2*pi;
 counter = 0;
 for i=idx:m
-    
-    if(i>500)
-        counter =counter+1;
-        if (counter>100)
-            para = polyfit((1/fs:1/fs:i/fs)',out_phase(1:i,1),1);
-            counter = 0;
-        end
+    counter =counter+1;
+    if (counter>100)
+        para = polyfit((idx/fs:1/fs:(idx+i)/fs;)',phase_mat(idx:(idx+500),1),1);
     end
     ref = para(1)*i/fs+para(2);
     temp = [abs(phase_mat(i,:) - ref) ; col];

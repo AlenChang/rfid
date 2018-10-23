@@ -1,7 +1,7 @@
 close all
 clearvars -except simout
 clc
-% load('/Users/zhangyongzhao/Desktop/RFID signal/small_gain_tag')
+load('E:\Matlab Project\Digital Communication lab\Software_Defined_Radio_using_MATLAB_Simulink_and_the_RTL-SDR___book_and_support_files\spectrum\RFID signal/small_gain_tag')
 fc=920.6126e6;
 fs=2e6;
 delta_T=1/fs;
@@ -13,7 +13,7 @@ T_end=m*n*delta_T;
 t = (0:delta_T:(T_end-delta_T))';
 
 plot_start_time = 1; %seconds
-plot_end_time = 8;
+plot_end_time = 2;
 
 time_window = 1;
 %% 
@@ -102,8 +102,6 @@ fig_l = figure;
 hold on
 fig_p = figure;
 hold on
-RSS_phase = zeros(num,1);
-slope = zeros(num,2);
 for i = 1:num
     phase_single = angle(data_mat(i,1:align(i,2))');
     temp = ([0;phase_single]-[phase_single;0])/delta_T;
@@ -129,31 +127,19 @@ for i = 1:num
     end
     
 
-    line_patt = phase_line(phase_mat,fs,idx);
-    filt_length = 100;
-    ave_filt=1/filt_length*ones(filt_length,1);
-    filt_out = conv(line_patt,ave_filt);
-    tra_t =delta_T*(1:align(i,2));
-    para = polyfit(tra_t((filt_length -1):end)',filt_out((filt_length -1):(end+1-filt_length)),1);
-    y_hat = polyval(para,tra_t((filt_length -1):end));
-    phase_diff = filt_out((filt_length -1):(end+1-filt_length))'-y_hat;
-    RSS_phase(i) = sum(phase_diff.*phase_diff);
-    if(RSS_phase(i)<500)
-        figure(fig_p)
-        scatter(tra_t((filt_length -1):end),phase_diff,3)
-        figure(fig_l)
-        scatter(tra_t,line_patt,3)
-    end
-    slope(i,1) = para(1);
-    slope(i,2) = para(2);
+%     line_patt = phase_line(phase_mat,fs,floor(predict_len/4));
+%     filt_length = 100;
+%     ave_filt=1/filt_length*ones(filt_length,1);
+%     filt_out = conv(line_patt,ave_filt);
+%     tra_t =delta_T*(1:align(i,2));
+%     para = polyfit(tra_t((filt_length -1):end)',filt_out((filt_length -1):(end+1-filt_length)),1);
+%     y_hat = polyval(para,tra_t((filt_length -1):end));
+%     phase_diff = filt_out((filt_length -1):(end+1-filt_length))'-y_hat;
+%     figure(fig_p)
+%     scatter(tra_t((filt_length -1):end),phase_diff,3)
+%     figure(fig_l)
+%     scatter(tra_t,line_patt,3)
 end
-
-figure
-plot(RSS_phase,'.')
-figure
-plot(slope(:,1))
-figure
-plot(slope(:,2))
 
 
 
